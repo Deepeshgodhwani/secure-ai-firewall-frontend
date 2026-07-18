@@ -1,9 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import ReactMarkdown from 'react-markdown';
+import { API_BASE_URL, WS_TRAFFIC_URL } from '../constants';
 import './DashboardPage.css';
-
-const API_BASE = 'http://localhost:4000/api';
-const WS_URL = 'ws://localhost:4000/ws/traffic';
 
 export default function DashboardPage() {
   const navigate = useNavigate();
@@ -22,7 +21,7 @@ export default function DashboardPage() {
       return;
     }
 
-    const socket = new WebSocket(WS_URL);
+    const socket = new WebSocket(WS_TRAFFIC_URL);
 
     socket.addEventListener('open', () => {
       setError('');
@@ -70,7 +69,7 @@ export default function DashboardPage() {
   }, [logs]);
 
   const fetchDashboard = async () => {
-    const response = await fetch(`${API_BASE}/protected/dashboard`, {
+    const response = await fetch(`${API_BASE_URL}/protected/dashboard`, {
       headers: { Authorization: `Bearer ${token}` }
     });
     if (!response.ok) {
@@ -106,7 +105,7 @@ export default function DashboardPage() {
     setQuestion('');
 
     try {
-      const response = await fetch(`${API_BASE}/protected/security-chat`, {
+      const response = await fetch(`${API_BASE_URL}/protected/security-chat`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -193,7 +192,11 @@ export default function DashboardPage() {
               {messages.map((message) => (
                 <div key={message.id} className={`chat-message ${message.role}`}>
                   <div className="chat-bubble">
-                    <p>{message.content}</p>
+                    {message.role === 'assistant' ? (
+                      <ReactMarkdown>{message.content}</ReactMarkdown>
+                    ) : (
+                      <p>{message.content}</p>
+                    )}
                   </div>
                 </div>
               ))}

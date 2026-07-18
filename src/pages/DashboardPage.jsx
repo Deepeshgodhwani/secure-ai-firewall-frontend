@@ -80,7 +80,7 @@ export default function DashboardPage() {
   };
 
   const handleLogout = async () => {
-    await fetch(`${API_BASE}/auth/logout`, {
+    await fetch(`${API_BASE_URL}/auth/logout`, {
       method: 'POST',
       headers: { Authorization: `Bearer ${token}` }
     });
